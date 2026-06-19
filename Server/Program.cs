@@ -57,7 +57,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<KontekstBazy>();
     await db.Database.EnsureCreatedAsync();
-    await NachalnyeDannye.ZapolnitAsync(db);
+   // await NachalnyeDannye.ZapolnitAsync(db); - Отключено для рендера
 }
 
 app.UseDefaultFiles();
