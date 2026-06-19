@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlyCat - Магазин игр</title>
+    <style>
+        :root {
+            --bg: #0f0f1a;
+            --surface: #1a1a2e;
+            --surface2: #16213e;
+            --text: #e0e0e0;
+            --text2: #909090;
+            --accent: #e94560;
+            --green: #2ecc71;
+            --border: #2a2a40;
+            --radius: 12px;
+            --toast-bg: #1a1a2e;
+        }
+
+        .light-theme {
+            --bg: #f0f4ff;
+            --surface: #ffffff;
+            --surface2: #dce8ff;
+            --text: #1a1a2e;
+            --text2: #4a5060;
+            --accent: #2563eb;
+            --green: #10b981;
+            --border: #c8d4e8;
+            --toast-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 4rem;
+        }
+
+        .navbar {
+            background: var(--surface);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .poisk {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.9rem;
+            min-width: 220px;
+            outline: none;
+        }
+
+        .poisk::placeholder {
+            color: var(--text2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            color: var(--text2);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+            position: relative;
+            user-select: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.7rem;
+            position: absolute;
+            top: -8px;
+            right: -16px;
+            font-weight: 600;
+        }
+
+       .theme-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            z-index: 150;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+        }
+
+        .theme-btn:hover {
+            background: var(--surface2);
+        }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background: #555;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-added {
+            background: var(--green);
+            color: #fff;
+            cursor: default;
+        }
+
+        .btn-wishlisted {
+            background: var(--accent);
+            color: #fff;
+            cursor: default;
+        }
+
+        .btn-owned {
+            background: #555;
+            color: #ccc;
+            cursor: default;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+}
+
+        .user-name {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .user-name:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .game-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-cover {
+            width: 100%;
+            height: 120px;
+            background: var(--surface2);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .game-info {
+            padding: 0.75rem;
+        }
+
+        .game-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-price {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0 0.75rem 0.75rem;
+        }
+
+        .game-actions .btn {
+            flex: 1;
+            font-size: 0.75rem;
+            padding: 0.4rem;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .game-badge.in-cart {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .game-badge.in-wishlist {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .game-badge.owned {
+            background: #555;
+            color: #ccc;
+        }
+
+        .auth-container {
+            max-width: 420px;
+            margin: 4rem auto;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--text2);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text2);
+            font-size: 0.85rem;
+        }
+
+        .auth-footer a {
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--accent), var(--surface2));
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--bg);
+            background-size: cover;
+            background-position: center;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--surface);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text2);
+        }
+
+        .cart-item,
+        .wishlist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--surface);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .cart-item-cover,
+        .wishlist-item-cover {
+            width: 80px;
+            height: 45px;
+            border-radius: 6px;
+            background: var(--surface2);
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info,
+        .wishlist-item-info {
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text2);
+        }
+
+        .detail-cover {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .modal h2 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 0.75rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg);
+        }
+
+        .payment-option:hover {
+            border-color: var(--accent);
+        }
+
+        .payment-option.selected {
+            border-color: var(--accent);
+            background: var(--surface2);
+        }
+
+        .payment-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .payment-icon.card {
+            background: #1a1f71;
+            color: #fff;
+        }
+
+        .payment-icon.sbp {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .payment-icon.yoomoney {
+            background: #7b2ff7;
+            color: #fff;
+        }
+
+        .payment-icon.crypto {
+            background: #f7931a;
+            color: #fff;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--toast-bg);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            min-width: 280px;
+            font-size: 0.85rem;
+        }
+
+        .toast-undo {
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .toast-undo:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .loader-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            z-index: 400;
+            width: 0;
+        }
+        .loader-bar.active {
+            width: 100%;
+            transition: width 0.3s;
+        }
+
+        @keyframes loaderAnim {
+            0% {
+                width: 0;
+                left: 0;
+            }
+            50% {
+                width: 70%;
+                left: 15%;
+            }
+            100% {
+                width: 0;
+                left: 100%;
+            }
+        }
+
+        .help-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .help-card h3 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .help-link {
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: underline;
+            margin-left: 1rem;
+        }
+
+        .help-link:hover {
+            color: var(--accent);
+        }
+
+        .help-back {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .nav-links {
+                margin-left: 0;
+            }
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="prilozhenie.perejti('magazin')">SlyCat</div>
+        <input type="text" class="poisk" id="poiskInput" placeholder="Поиск игр...">
+        <div class="nav-links">
+            <a onclick="prilozhenie.perejti('magazin')">Магазин</a>
+            <a onclick="prilozhenie.perejti('biblioteka')" id="navBiblioteka" style="display:none">Библиотека</a>
+            <a onclick="prilozhenie.perejti('zhelaemoe')" id="navZhelaemoe" style="display:none">Желаемое <span class="badge" id="zhelaemoeCount">0</span></a>
+            <a onclick="prilozhenie.perejti('korzina')" id="navKorzina" style="display:none">Корзина <span class="badge" id="korzinaCount">0</span></a>
+            <a class="help-link" onclick="prilozhenie.perejti('spravka')">Справка</a>
+            <div id="userMenu" class="user-menu"></div>
+        </div>
+    </nav>
+
+    <button class="theme-btn" onclick="prilozhenie.perekluchitTemu()" title="Сменить тему">&#9788;</button>
+
+    <div class="container" id="app"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="loader-bar" id="loaderBar"></div>
+    <script src="/dist/bundle.js"></script>
+</body>
+</html>
