@@ -8,6 +8,7 @@ import { renderLibrary } from './components/library';
 import { renderProfile, showEditProfileModal, uploadAvatar, saveProfile } from './components/profile';
 import { showPayment, processPayment } from './components/payment';
 import { renderHelp } from './components/help';
+import { renderAddGame, saveGame } from './components/addGame';
 
 class Prilozhenie {
     igry: any[] = [];
@@ -22,10 +23,7 @@ class Prilozhenie {
         this.tema = localStorage.getItem('slycat_theme') || 'dark';
         applyTheme();
         const saved = localStorage.getItem('slycat_user');
-        if (saved) {
-            setUser(JSON.parse(saved));
-            await this.zagruzitDannye();
-        }
+        if (saved) { setUser(JSON.parse(saved)); await this.zagruzitDannye(); }
         updateUI();
         await this.perejti('magazin');
         document.getElementById('poiskInput')?.addEventListener('input', (e: any) => {
@@ -34,48 +32,21 @@ class Prilozhenie {
         });
     }
 
-    perekluchitTemu(): void {
-        this.tema = this.tema === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('slycat_theme', this.tema);
-        applyTheme();
-    }
+    perekluchitTemu(): void { this.tema = this.tema === 'dark' ? 'light' : 'dark'; localStorage.setItem('slycat_theme', this.tema); applyTheme(); }
 
-    kuplena(gid: number): boolean {
-        return this.biblioteka.some((l: any) => l.igraId === gid);
-    }
-
-    vKorzine(gid: number): boolean {
-        return this.korzina.some((c: any) => c.igraId === gid);
-    }
-
-    vZhelaemom(gid: number): boolean {
-        return this.zhelaemoe.some((w: any) => w.igraId === gid);
-    }
+    kuplena(gid: number): boolean { return this.biblioteka.some((l: any) => l.igraId === gid); }
+    vKorzine(gid: number): boolean { return this.korzina.some((c: any) => c.igraId === gid); }
+    vZhelaemom(gid: number): boolean { return this.zhelaemoe.some((w: any) => w.igraId === gid); }
 
     async zagruzitDannye(): Promise<void> {
         if (!getUser()) return;
-        const [p, w, c, l] = await Promise.all([
-            getProfile().catch(() => null),
-            getWishlist().catch(() => []),
-            getCart().catch(() => []),
-            getLibrary().catch(() => [])
-        ]);
-        this.profil = p;
-        this.zhelaemoe = w;
-        this.korzina = c;
-        this.biblioteka = l;
-        if (p?.avatar) {
-            const u = getUser()!;
-            u.avatar = p.avatar;
-            setUser(u);
-            localStorage.setItem('slycat_user', JSON.stringify(u));
-        }
+        const [p, w, c, l] = await Promise.all([getProfile().catch(() => null), getWishlist().catch(() => []), getCart().catch(() => []), getLibrary().catch(() => [])]);
+        this.profil = p; this.zhelaemoe = w; this.korzina = c; this.biblioteka = l;
+        if (p?.avatar) { const u = getUser()!; u.avatar = p.avatar; setUser(u); localStorage.setItem('slycat_user', JSON.stringify(u)); }
         (document.getElementById('zhelaemoeCount') as HTMLElement).textContent = String(this.zhelaemoe.length);
         (document.getElementById('korzinaCount') as HTMLElement).textContent = String(this.korzina.length);
         updateUI();
         if (this.modul === 'magazin') await this.otrisovatKatalog();
-        if (this.modul === 'zhelaemoe') this.otrisovatZhelaemoe();
-        if (this.modul === 'korzina') await this.otrisovatKorzinu();
     }
 
     otrisovatKatalog = renderCatalog;
@@ -85,6 +56,7 @@ class Prilozhenie {
     otrisovatBiblioteku = renderLibrary;
     otrisovatProfil = renderProfile;
     otrisovatSpravku = renderHelp;
+    otrisovatDobavitIgru = renderAddGame;
     pokazatVhod = showLogin;
     pokazatRegistraciyu = showRegister;
     obrabotatAuth = handleAuth;
@@ -96,18 +68,11 @@ class Prilozhenie {
     pokazatRedaktirovanieProfilya = showEditProfileModal;
     zagruzitAvatar = uploadAvatar;
     sohranitProfil = saveProfile;
+    sohranitIgru = saveGame;
     vyjti = navbarLogout;
 
-    async dobavitVZhelaemoe(gid: number): Promise<void> {
-        if (this.kuplena(gid)) return;
-        await addToWishlist(gid);
-        await this.zagruzitDannye();
-    }
-
-    async udalitIzZhelaemogo(id: number): Promise<void> {
-        await removeFromWishlist(id);
-        await this.zagruzitDannye();
-    }
+    async dobavitVZhelaemoe(gid: number): Promise<void> { if (this.kuplena(gid)) return; await addToWishlist(gid); await this.zagruzitDannye(); }
+    async udalitIzZhelaemogo(id: number): Promise<void> { await removeFromWishlist(id); await this.zagruzitDannye(); }
 
     async perejti(m: string): Promise<void> {
         this.modul = m;
@@ -119,6 +84,7 @@ class Prilozhenie {
         else if (m === 'biblioteka') this.otrisovatBiblioteku();
         else if (m === 'profil') this.otrisovatProfil();
         else if (m === 'spravka') this.otrisovatSpravku();
+        else if (m === 'dobavit') this.otrisovatDobavitIgru();
     }
 }
 

@@ -31,7 +31,8 @@ public class AuthKontroller : ControllerBase
             Pochta = zapros.Email,
             HashParolya = HeshirovanieParolya.Zheshirovat(zapros.Password),
             Sozdan = DateTime.UtcNow,
-            DvuhetapnayaAvtorizaciya = false
+            DvuhetapnayaAvtorizaciya = false,
+            Rol = zapros.Rol
         };
 
         _db.Polzovateli.Add(polzovatel);
@@ -56,7 +57,8 @@ public class AuthKontroller : ControllerBase
             userId = polzovatel.Id,
             username = polzovatel.Imya,
             email = polzovatel.Pochta,
-            avatar = polzovatel.Avatar
+            avatar = polzovatel.Avatar,
+            rol = polzovatel.Rol
         });
     }
 
@@ -66,7 +68,8 @@ public class AuthKontroller : ControllerBase
         {
             new Claim(ClaimTypes.NameIdentifier, polzovatel.Id.ToString()),
             new Claim(ClaimTypes.Name, polzovatel.Imya),
-            new Claim(ClaimTypes.Email, polzovatel.Pochta)
+            new Claim(ClaimTypes.Email, polzovatel.Pochta),
+            new Claim(ClaimTypes.Role, polzovatel.Rol)
         };
 
         var key = new SymmetricSecurityKey(

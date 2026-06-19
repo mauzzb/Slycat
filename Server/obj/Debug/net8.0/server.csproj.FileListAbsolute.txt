@@ -46,3 +46,4 @@ C:\Users\Lenovo\OneDrive\Desktop\Slycat-main\Server\obj\Debug\net8.0\server.pdb
 C:\Users\Lenovo\OneDrive\Desktop\Slycat-main\Server\obj\Debug\net8.0\server.genruntimeconfig.cache
 C:\Users\Lenovo\OneDrive\Desktop\Slycat-main\Server\obj\Debug\net8.0\ref\server.dll
 C:\Users\Lenovo\OneDrive\Desktop\Slycat-main\Server\bin\Debug\net8.0\appsettings.json
+C:\Users\Lenovo\OneDrive\Desktop\Slycat-main\Server\obj\Debug\net8.0\server.sourcelink.json

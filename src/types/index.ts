@@ -4,6 +4,7 @@ export interface User {
     email: string;
     token: string;
     avatar: string | null;
+    rol: string;
 }
 
 export interface Game {
